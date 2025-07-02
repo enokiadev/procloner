@@ -36,7 +36,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/auth/status', {
+      const response = await fetch('http://localhost:3002/auth/status', {
         credentials: 'include'
       });
       const data = await response.json();
@@ -55,12 +55,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const login = () => {
-    window.location.href = '/auth/google';
+    window.location.href = 'http://localhost:3002/auth/google';
   };
 
   const logout = async () => {
     try {
-      await fetch('/auth/logout', {
+      await fetch('http://localhost:3002/auth/logout', {
         method: 'POST',
         credentials: 'include'
       });

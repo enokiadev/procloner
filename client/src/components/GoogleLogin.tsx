@@ -7,7 +7,7 @@ interface GoogleLoginProps {
 
 const GoogleLogin: React.FC<GoogleLoginProps> = ({ onLogin }) => {
   const handleGoogleLogin = () => {
-    window.location.href = '/auth/google';
+    window.location.href = 'http://localhost:3002/auth/google';
   };
 
   return (
