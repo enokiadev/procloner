@@ -932,7 +932,8 @@ async function crawlWebsite(session) {
   }
 }
 
-const PORT = config.port;
+// Use PORT env variable for cloud platforms like Render
+const PORT = process.env.PORT || config.port;
 
 server.listen(PORT, () => {
   logger.info('ProCloner server started', {

@@ -40,9 +40,8 @@ FROM base AS production
 RUN addgroup -g 1001 -S procloner && \
     adduser -S procloner -u 1001
 
-# Set environment variables
+# Set environment variables (Render.com uses PORT env var)
 ENV NODE_ENV=production \
-    PORT=3002 \
     PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 

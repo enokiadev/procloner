@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { AUTH_CONFIG } from '../config/auth';
 
 interface User {
   id: string;
@@ -36,7 +37,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('http://localhost:3002/auth/status', {
+      const response = await fetch(`${AUTH_CONFIG.authUrl}/status`, {
         credentials: 'include'
       });
       const data = await response.json();
@@ -55,12 +56,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const login = () => {
-    window.location.href = 'http://localhost:3002/auth/google';
+    window.location.href = `${AUTH_CONFIG.authUrl}/google`;
   };
 
   const logout = async () => {
     try {
-      await fetch('http://localhost:3002/auth/logout', {
+      await fetch(`${AUTH_CONFIG.authUrl}/logout`, {
         method: 'POST',
         credentials: 'include'
       });
