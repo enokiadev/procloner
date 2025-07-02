@@ -69,8 +69,8 @@ app.use(passport.session());
 // Auth routes
 app.use('/auth', authRouter);
 
-// Static files
-app.use(express.static("public"));
+// Serve static files from the React app build directory
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // CSP violation reporting
 app.post('/api/csp-report', express.json({ type: 'application/csp-report' }), handleCSPReport);
@@ -931,6 +931,11 @@ async function crawlWebsite(session) {
     });
   }
 }
+
+// Catch-all handler: send back React's index.html file for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+});
 
 // Use PORT env variable for cloud platforms like Render
 const PORT = process.env.PORT || config.port;
