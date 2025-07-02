@@ -1,6 +1,52 @@
-# ProCloner Production Deployment Guide
+# 🚀 ProCloner Deployment Guide
 
-This guide covers deploying ProCloner in a production environment using Docker.
+This guide covers multiple deployment options for ProCloner, including Netlify (recommended) and Docker.
+
+## 🌐 Netlify Deployment (Recommended)
+
+[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/yourusername/procloner)
+
+### Prerequisites for Netlify
+
+1. **Google OAuth Setup**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select existing
+   - Enable Google+ API
+   - Create OAuth 2.0 credentials
+   - Add authorized redirect URIs:
+     - `https://your-site.netlify.app/auth/google/callback`
+     - `http://localhost:5173/auth/google/callback` (for development)
+
+2. **Netlify Account**: Sign up at [netlify.com](https://netlify.com)
+
+### Quick Netlify Deploy
+
+1. **Fork and Clone Repository**:
+   ```bash
+   git clone https://github.com/yourusername/procloner.git
+   cd procloner
+   ```
+
+2. **Configure Environment Variables** in Netlify dashboard:
+   ```env
+   GOOGLE_CLIENT_ID=your_google_client_id_here
+   GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+   SESSION_SECRET=your_random_session_secret_here
+   ADMIN_EMAILS=admin@example.com,admin2@example.com
+   NODE_ENV=production
+   ```
+
+3. **Deploy**:
+   - Connect GitHub repository to Netlify
+   - Build command: `npm run build`
+   - Publish directory: `client/dist`
+   - Base directory: `client`
+
+---
+
+## 🐳 Docker Deployment
+
+For self-hosted solutions with full crawling capabilities.
 
 ## Prerequisites
 
