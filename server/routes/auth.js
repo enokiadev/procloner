@@ -25,7 +25,10 @@ router.get('/google',
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
-    res.redirect(process.env.NODE_ENV === 'production' ? '/' : 'http://localhost:5173');
+    const redirectUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://procloner.onrender.com/' 
+      : 'http://localhost:5173';
+    res.redirect(redirectUrl);
   }
 );
 
