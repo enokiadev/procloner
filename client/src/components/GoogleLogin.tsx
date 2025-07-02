@@ -2,11 +2,7 @@ import React from 'react';
 import { User } from 'lucide-react';
 import { AUTH_CONFIG } from '../config/auth';
 
-interface GoogleLoginProps {
-  onLogin: () => void;
-}
-
-const GoogleLogin: React.FC<GoogleLoginProps> = ({ onLogin }) => {
+const GoogleLogin: React.FC = () => {
   const handleGoogleLogin = () => {
     window.location.href = `${AUTH_CONFIG.authUrl}/google`;
   };

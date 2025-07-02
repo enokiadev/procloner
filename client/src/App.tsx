@@ -284,7 +284,7 @@ function AppContent() {
   }
 
   if (!user) {
-    return <GoogleLogin onLogin={() => {}} />
+    return <GoogleLogin />
   }
 
   if (showAdmin && user.isAdmin) {
@@ -298,7 +298,6 @@ function AppContent() {
         connectionStatus={connectionStatus}
         user={user}
         onShowAdmin={() => setShowAdmin(true)}
-        onBackToMain={() => setShowAdmin(false)}
       />
 
       {/* Session Recovery Dialog */}

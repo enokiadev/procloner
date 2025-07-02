@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { BarChart3, Users, Activity, Download, Clock, TrendingUp } from 'lucide-react';
+import { BarChart3, Activity, Download, TrendingUp } from 'lucide-react';
 
 interface Stats {
   totalSessions: number;

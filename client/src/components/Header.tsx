@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Github, Star, Zap, Wifi, WifiOff, RotateCcw, Settings, LogOut, User } from 'lucide-react'
+import { Github, Star, Zap, Wifi, WifiOff, RotateCcw, Settings, LogOut } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
 
 interface HeaderProps {
@@ -8,14 +8,12 @@ interface HeaderProps {
   connectionStatus?: 'connecting' | 'connected' | 'disconnected' | 'reconnecting'
   user?: any
   onShowAdmin?: () => void
-  onBackToMain?: () => void
 }
 
 const Header: React.FC<HeaderProps> = ({ 
   connectionStatus = 'connecting', 
   user, 
-  onShowAdmin, 
-  onBackToMain 
+  onShowAdmin 
 }) => {
   const { logout } = useAuth()
   return (
