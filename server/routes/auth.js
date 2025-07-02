@@ -18,16 +18,55 @@ const requireAdmin = (req, res, next) => {
 };
 
 // Google OAuth routes
-router.get('/google', 
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
+router.get('/google', (req, res, next) => {
+  // Store the referrer or origin in the session for redirect after auth
+  const referrer = req.get('Referer') || req.get('Origin');
+  if (referrer && !referrer.includes('google.com')) {
+    req.session.authRedirect = referrer;
+  }
+  
+  passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+});
 
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   (req, res) => {
-    const redirectUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://procloner.onrender.com/' 
-      : 'http://localhost:5173';
+    // Get the stored redirect URL or default to environment-based URL
+    let redirectUrl = req.session.authRedirect;
+    
+    // Clear the stored redirect
+    delete req.session.authRedirect;
+    
+    // Fallback to environment-based redirect if no stored URL
+    if (!redirectUrl) {
+      redirectUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://procloner.onrender.com/' 
+        : 'http://localhost:5173';
+    }
+    
+    // Ensure it's a safe redirect (same origin or known safe domains)
+    const allowedOrigins = [
+      'https://procloner.onrender.com',
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'http://localhost:8080'
+    ];
+    
+    try {
+      const redirectOrigin = new URL(redirectUrl).origin;
+      if (!allowedOrigins.includes(redirectOrigin)) {
+        // If not allowed origin, use default
+        redirectUrl = process.env.NODE_ENV === 'production' 
+          ? 'https://procloner.onrender.com/' 
+          : 'http://localhost:5173';
+      }
+    } catch (error) {
+      // Invalid URL, use default
+      redirectUrl = process.env.NODE_ENV === 'production' 
+        ? 'https://procloner.onrender.com/' 
+        : 'http://localhost:5173';
+    }
+    
     res.redirect(redirectUrl);
   }
 );

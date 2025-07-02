@@ -197,6 +197,9 @@ class HtmlProcessor {
       // Add base tag to handle relative URLs
       processedHtml = this.addBaseTag(processedHtml, pageUrl);
 
+      // Fix SPA routing issues for cloned sites
+      processedHtml = this.fixSPARouting(processedHtml, this.outputDir);
+
       logger.debug('HTML processing completed', {
         component: 'HtmlProcessor',
         originalLength: htmlContent.length,
@@ -225,7 +228,7 @@ class HtmlProcessor {
       if (localPath) {
         const newMatch = match.replace(href, localPath);
         const linkType = this.isStylesheet(match) ? 'CSS link' : 'link';
-        logger.debug(`Rewrote ${linkType}`, {
+        logger.debug(`Rewritten ${linkType}`, {
           component: 'HtmlProcessor',
           original: href,
           rewritten: localPath
@@ -246,7 +249,7 @@ class HtmlProcessor {
       
       if (localPath) {
         const newMatch = match.replace(src, localPath);
-        logger.debug('Rewrote JavaScript source', {
+        logger.debug('Rewritten JavaScript source', {
           component: 'HtmlProcessor',
           original: src,
           rewritten: localPath
@@ -267,7 +270,7 @@ class HtmlProcessor {
       
       if (localPath) {
         const newMatch = match.replace(src, localPath);
-        logger.debug('Rewrote image source', {
+        logger.debug('Rewritten image source', {
           component: 'HtmlProcessor',
           original: src,
           rewritten: localPath
@@ -329,7 +332,7 @@ class HtmlProcessor {
       const localPath = this.getLocalAssetPath(absoluteUrl, cssFilePath);
       
       if (localPath) {
-        logger.debug('Rewrote CSS @import statement', {
+        logger.debug('Rewritten CSS @import statement', {
           component: 'HtmlProcessor',
           original: url,
           rewritten: localPath
@@ -346,7 +349,7 @@ class HtmlProcessor {
       const localPath = this.getLocalAssetPath(absoluteUrl, cssFilePath);
       
       if (localPath) {
-        logger.debug('Rewrote CSS url() reference', {
+        logger.debug('Rewritten CSS url() reference', {
           component: 'HtmlProcessor',
           original: url,
           rewritten: localPath
@@ -595,6 +598,50 @@ class HtmlProcessor {
         localPath: cssAsset.localPath,
         error: error.message
       });
+    }
+  }
+
+  // Fix SPA routing issues for cloned sites
+  fixSPARouting(html, baseDir) {
+    try {
+      // Convert Vue.js router links to static file references
+      const routeMap = {
+        '/tulpen': '_tulpen.html',
+        '/moontime': '_moontime.html', 
+        '/pridelands': '_pridelands.html',
+        '/cvletter': '_cvletter.html'
+      };
+
+      let processedHtml = html;
+
+      // Fix router-link href attributes
+      Object.entries(routeMap).forEach(([route, file]) => {
+        const fs = require('fs');
+        const path = require('path');
+        const filePath = path.join(baseDir, file);
+        
+        // Only replace if the static file exists
+        if (fs.existsSync(filePath)) {
+          // Replace both regular links and router-link hrefs
+          const routeRegex = new RegExp(`href="${route}"`, 'g');
+          const routeRegexAlt = new RegExp(`href='${route}'`, 'g');
+          processedHtml = processedHtml.replace(routeRegex, `href="${file}"`);
+          processedHtml = processedHtml.replace(routeRegexAlt, `href="${file}"`);
+        }
+      });
+
+      // Fix anchor links to use proper fragments
+      processedHtml = processedHtml.replace(/href="\/\#([^"]+)"/g, 'href="#$1"');
+      processedHtml = processedHtml.replace(/href='\/\#([^']+)'/g, "href='#$1'");
+
+      // Remove router-link-active classes that might cause issues
+      processedHtml = processedHtml.replace(/\s*router-link-active\s*/g, ' ');
+      processedHtml = processedHtml.replace(/\s*router-link-exact-active\s*/g, ' ');
+
+      return processedHtml;
+    } catch (error) {
+      this.logger.warn('SPA routing fix error', { error: error.message });
+      return html;
     }
   }
 }
